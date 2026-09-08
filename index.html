@@ -2,157 +2,139 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Idiomai - Plataforma Gamer de Idiomas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
-        body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        header { text-align: center; margin: 20px 0; width: 100%; max-width: 400px; cursor: pointer; }
-        header h1 { font-size: 2.2rem; color: #38bdf8; text-shadow: 0 0 15px rgba(56,189,248,0.4); }
-        header p { font-size: 0.9rem; color: #94a3b8; margin-top: 5px; background: #1e293b; padding: 8px; border-radius: 10px; border: 1px dashed #38bdf8; }
-
-        .hidden { display: none !important; }
-        .screen { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; }
-
-        /* MENU HOME */
-        .score-display { background: #1e293b; padding: 10px 20px; border-radius: 50px; font-weight: bold; margin-bottom: 15px; border: 1px solid #334155; color: #f59e0b; font-size: 1.1rem; }
+        * { box-sizing: border-box; user-select: none; }
+        :root { --group-color: #00ff66; }
+        body { font-family: 'Courier New', Courier, monospace; background: #060608; color: #fff; margin: 0; padding: 8px; text-align: center; overflow-x: hidden; }
         
-        /* BOTÕES QUADRADOS GRANDES */
-        .grid-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; margin-top: 15px; }
-        .group-btn { border: none; height: 140px; border-radius: 20px; font-weight: bold; color: #0f172a; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 15px rgba(0,0,0,0.4); }
-        .group-btn span { font-size: 2.5rem; }
-        .group-btn:active { transform: scale(0.95); }
-        .btn-ninja { grid-column: span 2; height: 90px; background: linear-gradient(45deg, #ef4444, #b91c1c); color: white; text-transform: uppercase; font-size: 1.2rem; letter-spacing: 1px; box-shadow: 0 0 15px rgba(239,68,68,0.5); flex-direction: row; }
+        .container { max-width: 500px; margin: 0 auto; background: #0f0f14; border: 4px solid #333; border-radius: 16px; padding: 12px; box-shadow: 0 0 25px rgba(0,255,100,0.1); min-height: 96vh; display: flex; flex-direction: column; justify-content: space-between; transition: border-color 0.3s; }
+        
+        /* HUD Superior */
+        .hud-header { display: flex; justify-content: space-between; align-items: center; background: #161620; padding: 10px; border-radius: 10px; border: 2px solid #333; margin-bottom: 8px; font-weight: bold; font-size: 13px; }
+        .score-board { color: #ffcc00; }
+        .level-board { color: #00ff66; }
+        
+        /* Chave Romaji HUD */
+        .romaji-toggle-box { background: #111; border: 1px dashed #ffcc00; padding: 6px; border-radius: 6px; font-size: 11px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Personagem Companheiro HUD */
+        .companion-hud-box { display: flex; align-items: center; background: #1a1a26; padding: 8px; border-radius: 8px; border: 1px solid var(--group-color); margin-bottom: 10px; text-align: left; }
+        .companion-avatar { font-size: 35px; margin-right: 10px; }
+        .companion-bubble { font-size: 12px; color: #ccc; font-style: italic; }
 
-        /* FLASHCARDS SCREEN */
-        .flashcard-container { width: 100%; height: 260px; perspective: 1000px; margin: 20px 0; }
-        .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s; border-radius: 20px; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+        /* Botão Neon */
+        .btn { display: block; width: 100%; padding: 12px; margin: 6px 0; background: #13131a; border: 2px solid var(--group-color); color: #fff; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
+        .btn:active { background: var(--group-color); color: #000; }
+        .btn-danger { border-color: #ff3333 !important; color: #ff3333; }
+        .btn-danger:active { background: #ff3333 !important; color: #fff; }
+        .hidden { display: none !important; }
+        
+        /* Ruby/Furigana */
+        ruby { ruby-position: over; }
+        rt { font-size: 10px; color: #00ff66; font-weight: bold; }
+        .romaji-text { display: block; font-size: 11px; color: #aaa; font-style: italic; margin-top: 4px; }
+
+        /* Grid de Seleção */
+        .char-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
+        .char-card { background: #161622; border: 2px solid #555; border-radius: 10px; padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; text-align: left; }
+        .char-card:active { border-color: #00ff66; background: #112211; }
+
+        /* Trilha Mapa */
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+
+        /* Flashcards */
+        .flashcard-wrapper { perspective: 1000px; width: 260px; height: 340px; margin: 10px auto; }
+        .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.4s; }
         .flashcard.flipped { transform: rotateY(180deg); }
-        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
-        .front { background: white; color: #0f172a; }
-        .back { transform: rotateY(180deg); background: #1e293b; color: white; border: 3px solid #38bdf8; }
-        .card-img { width: 100%; height: 70%; object-fit: cover; border-radius: 12px; margin-bottom: 10px; background: #e2e8f0; }
-        .word-txt { font-size: 1.8rem; font-weight: bold; text-transform: capitalize; text-align: center; }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 15px; border: 4px solid var(--group-color); background: #161622; box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
+        .card-back { transform: rotateY(180deg); filter: brightness(1.1); }
+        .card-face.error-flash { background-color: #551111 !important; border-color: #ff3333 !important; }
+        .card-emoji { font-size: 50px; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50%; border: 2px dashed var(--group-color); }
+        .card-word { font-size: 20px; font-weight: bold; color: #fff; }
+        .card-phrase { font-size: 12px; font-style: italic; color: #bbb; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 5px; width: 100%; }
+        .audio-btn { background: #222; border: 2px solid #ffcc00; color: #ffcc00; border-radius: 50%; width: 40px; height: 40px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .options-container { width: 100%; }
+        .opt-btn { background: #111; border: 2px solid #555; color: #fff; width: 100%; padding: 8px; margin: 4px 0; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        /* ALTERNATIVAS */
-        .options-container { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-bottom: 20px; }
-        .option-btn { background: #1e293b; border: 1px solid #334155; color: white; padding: 14px; border-radius: 12px; font-size: 1.1rem; cursor: pointer; text-align: left; transition: all 0.2s; }
-        .option-btn:active { transform: scale(0.98); }
-        .correct { background: #10b981 !important; border-color: #059669 !important; color: white; }
-        .wrong { background: #ef4444 !important; border-color: #dc2626 !important; color: white; }
-        .nav-btn { background: #334155; border: none; color: white; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; }
+        /* Canvas Jogos */
+        #ninja-canvas-area, #shooter-canvas-area { width: 100%; height: 300px; background: #09090d; border: 3px dashed var(--group-color); position: relative; overflow: hidden; border-radius: 8px; margin: 10px 0; }
+        .ninja-word { position: absolute; color: #ff3333; font-size: 18px; font-weight: bold; text-shadow: 0 0 8px rgba(255,0,0,0.8); padding: 8px; cursor: pointer; white-space: nowrap; animation: fall linear forwards; }
+        @keyframes fall { 0% { top: -40px; } 100% { top: 320px; } }
+        .target-banner { background: #1e1e28; border: 2px dashed #ffcc00; padding: 8px; font-size: 15px; font-weight: bold; border-radius: 6px; }
+        .shooter-ship { position: absolute; background: #1a1a26; border: 2px solid var(--group-color); padding: 8px; border-radius: 6px; font-size: 13px; font-weight: bold; color: #fff; cursor: pointer; white-space: nowrap; animation: flyHorizontal linear forwards; }
+        @keyframes flyHorizontal { 0% { left: -150px; } 100% { left: 520px; } }
 
-        /* JOGO NINJA */
-        #game-canvas { width: 100%; height: 400px; background: #020617; border: 2px dashed #ef4444; border-radius: 20px; position: relative; overflow: hidden; margin-top: 15px; }
-        .falling-word { position: absolute; background: #ef4444; color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; white-space: nowrap; animation: fall linear forwards; box-shadow: 0 0 8px rgba(239,68,68,0.6); }
-        @keyframes fall { 0% { top: -40px; } 100% { top: 410px; } }
+        /* Diálogos */
+        .dialogue-box { background: #161622; border: 3px solid var(--group-color); border-radius: 12px; padding: 12px; margin: 10px 0; text-align: left; }
+        .dialogue-person { font-weight: bold; color: #ffcc00; font-size: 13px; }
+        .dialogue-text { font-size: 15px; font-style: italic; color: #fff; }
+
+        /* Tela de Prova Física */
+        .exam-question-card { background: #161625; border: 2px solid #ffcc00; border-radius: 12px; padding: 15px; text-align: left; margin: 15px 0; }
     </style>
 </head>
 <body>
 
-    <header onclick="initAudioAndPlayYo()">
-        <h1>WELCOME TO IDIOMAI</h1>
-        <p id="main-subtitle">👉 CLIQUE AQUI para iniciar o jogo! 👈</p>
-    </header>
-
-    <div class="score-display" style="margin-top: 15px;">PONTOS: <span id="global-score">0</span></div>
-
-    <!-- TELA 1: HOME -->
-    <div id="screen-home" class="screen">
-        <div class="grid-groups">
-            <button class="group-btn btn-ninja" onclick="startNinjaGame()"><span>⚔️</span> JOGO WORD NINJA</button>
-            <button class="group-btn" style="background: #fef08a;" onclick="startGroup('utensilios')"><span>🏠</span>Utensílios</button>
-            <button class="group-btn" style="background: #fed7aa;" onclick="startGroup('profissoes')"><span>💼</span>Profissões</button>
-            <button class="group-btn" style="background: #bfdbfe;" onclick="startGroup('escola')"><span>🎒</span>Escola</button>
-            <button class="group-btn" style="background: #fca5a5;" onclick="startGroup('hospital')"><span>🏥</span>Hospital</button>
-            <button class="group-btn" style="background: #f472b6;" onclick="startGroup('halloween')"><span>🎃</span>Halloween</button>
-            <button class="group-btn" style="background: #e2e8f0;" onclick="startGroup('construcao')"><span>🏗️</span>Construção</button>
-            <button class="group-btn" style="background: #bbf7d0;" onclick="startGroup('animais')"><span>🦁</span>Animais</button>
-            <button class="group-btn" style="background: #ddd6fe;" onclick="startGroup('transportes')"><span>🚗</span>Transportes</button>
+<div class="container" id="main-container">
+    <div>
+        <!-- PLACAR SUPERIOR HUD -->
+        <div class="hud-header">
+            <span class="level-board">FASE: <span id="user-level">1</span> (<span id="active-lang-indicator">EN</span>)</span>
+            <span class="score-board">PONTOS: <span id="score-val">0</span></span>
         </div>
-    </div>
 
-    <!-- TELA 2: FLASHCARDS + QUIZ -->
-    <div id="screen-cards" class="screen hidden">
-        <button class="nav-btn" onclick="goToHome()" style="align-self: flex-start;">◀ Voltar ao Menu</button>
-        <div class="flashcard-container">
-            <div class="flashcard" id="html-card" onclick="flipCard()">
-                <div class="face front" id="card-front-face">
-                    <img src="" id="img-asset" class="card-img" alt="Vocabulário">
-                    <div class="word-txt" id="txt-portugues">Carregando...</div>
+        <!-- COGNIÇÃO ROMAJI -->
+        <div class="romaji-toggle-box hidden" id="romaji-control-panel">
+            <span>Ativar Legenda em Romaji?</span>
+            <input type="checkbox" id="romaji-toggle-chk" onchange="toggleRomajiSetting()" style="width:18px; height:18px;">
+        </div>
+
+        <!-- COMPANHEIRO HUD -->
+        <div class="companion-hud-box hidden" id="companion-hud">
+            <div class="companion-avatar" id="companion-avatar-icon">❓</div>
+            <div>
+                <div style="font-weight:bold; font-size:13px;" id="companion-name-txt">Mascote</div>
+                <div class="companion-bubble" id="companion-speech">Let's study!</div>
+            </div>
+        </div>
+
+        <!-- TELA 1: SELEÇÃO DE PERSONAGEM -->
+        <div id="screen-char-select">
+            <h1>WELCOME TO IDIOMAI</h1>
+            <p style="color: #aaa; font-size: 13px;">Escolha o santo ou herói que guiará sua jornada:</p>
+            <div class="char-grid">
+                <div class="char-card" onclick="setCompanion('São Francisco', '🕊️', 'Paz e Bem! Vamos aprender com dedicação!')">
+                    <div style="font-size:35px;">🕊️</div>
+                    <div><strong>São Francisco de Assis</strong><br><span style="font-size:11px; color:#aaa;">Guia com paz e paciência.</span></div>
                 </div>
-                <div class="face back">
-                    <div class="word-txt" id="txt-ingles" style="color: #38bdf8;">...</div>
-                    <p style="margin-top:10px; font-size:0.8rem; color:#94a3b8;">Toque para ver a dica</p>
+                <div class="char-card" onclick="setCompanion('Santa Teresinha', '🌹', 'Vou derramar uma chuva de rosas e acertos nos seus estudos!')">
+                    <div style="font-size:35px;">🌹</div>
+                    <div><strong>Santa Teresinha</strong><br><span style="font-size:11px; color:#aaa;">Guia com carinho e pequenas metas.</span></div>
+                </div>
+                <div class="char-card" onclick="setCompanion('Goku (Anime)', '🔥', 'Oi, eu sou o Goku! Vamos treinar o seu idioma com tudo!')">
+                    <div style="font-size:35px;">🔥</div>
+                    <div><strong>Goku (Anime)</strong><br><span style="font-size:11px; color:#aaa;">Focado em ação e superação!</span></div>
                 </div>
             </div>
         </div>
-        <div id="quiz-alert-text" style="margin-bottom: 10px; font-size: 0.9rem; color: #f59e0b; font-weight: bold; text-align: center;">Qual é a tradução correta? Se errar, volta do início! ⚠️</div>
-        <div class="options-container" id="quiz-options"></div>
-    </div>
 
-    <!-- TELA 3: JOGO DO NINJA -->
-    <div id="screen-ninja" class="screen hidden">
-        <div style="display:flex; justify-content: space-between; width:100%;">
-            <button class="nav-btn" onclick="stopNinjaGame()">🛑 Sair do Jogo</button>
-            <div style="font-weight:bold; color:#ef4444;">NÍVEL: <span id="ninja-level">1</span></div>
+        <!-- TELA 1.5: SELEÇÃO DE IDIOMA TARGET -->
+        <div id="screen-lang-select" class="hidden">
+            <h2 style="color:#ffcc00;">SELECIONE O IDIOMA</h2>
+            <p style="color:#aaa; font-size:13px;">Qual idioma você deseja praticar hoje na trilha?</p>
+            <button class="btn" style="--group-color: #4da6ff;" onclick="setTargetLanguage('en')">🇺🇸 Inglês (English)</button>
+            <button class="btn" style="--group-color: #ff4d4d;" onclick="setTargetLanguage('ja')">🇯🇵 Japonês (日本語)</button>
         </div>
-        <p style="font-size:0.8rem; color:#94a3b8; margin-top:10px; text-align:center;">Toque rápido nas palavras vermelhas em inglês para cortá-las!</p>
-        <div id="game-canvas"></div>
-    </div>
 
-    <script>
-        let audioCtx = null;
+        <!-- TELA 2: MAPA DA JORNADA -->
+        <div id="screen-menu" class="hidden">
+            <h2 style="color:#00ff66; font-size: 20px;">MAPA DA TRILHA</h2>
+            <p style="color: #aaa; font-size: 12px;">Conclua as categorias para abrir a prova final!</p>
+            <div class="grid-menu" id="groups-trilha-box"></div>
+        </div>
 
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-
-        function playYoSound() {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(250, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.25);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
-        }
-
-        function initAudioAndPlayYo() {
-            initAudio();
-            playYoSound();
-            document.getElementById('main-subtitle').textContent = "Aprenda vocabulários jogando e acumulando pontos!";
-        }
-
-        function playSlashSound() {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.12);
-            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.12);
-        }
-
-        function playNinjaScream() {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(320, audioCtx.currentTime + 0.1);
+        <!-- PASSO 1: FLASHCARDS -->
+        <div id="screen-flashcards" class="hidden">
+            <h2 style="font-size:14px; color:#ffcc00;">[PASSO 1/5] Quiz Flashcards</h2>
