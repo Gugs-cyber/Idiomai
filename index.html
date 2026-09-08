@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idiomai - Flashcards Visuais Inteligentes</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif; }
+        body { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; color: white; overflow-x: hidden; }
+        
+        header { text-align: center; margin-bottom: 25px; animation: fadeIn 1s ease; }
+        header h1 { font-size: 2.8rem; font-weight: 800; background: linear-gradient(to right, #ff007f, #7928ca); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        header p { font-size: 1rem; opacity: 0.85; margin-top: 5px; font-weight: 300; letter-spacing: 0.5px; }
+        
+        .flashcard-container { width: 330px; height: 460px; perspective: 1200px; cursor: pointer; margin-bottom: 10px; }
+        .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-radius: 24px; }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 22px; background: white; color: #333; border: 1px solid rgba(255,255,255,0.1); transition: background 0.3s ease; }
+        .card-front { background: #ffffff; }
+        .card-back { transform: rotateY(180deg); background: #fdfdfd; border: 4px solid #7928ca; }
+        
+        .image-box { width: 100%; height: 230px; border-radius: 16px; overflow: hidden; background: #f0f0f0; margin-bottom: 10px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); position: relative; }
+        .image-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .flashcard-container:hover .image-box img { transform: scale(1.04); }
+        
+        .badge { position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); }
+        
+        .word-text { font-size: 2.4rem; font-weight: 800; color: #1e3c72; text-align: center; margin: auto 0; letter-spacing: -0.5px; }
+        .translation-text { font-size: 2rem; font-weight: 700; color: #7928ca; text-align: center; margin-top: 15px; margin-bottom: 10px; }
+        .example-text { font-size: 1rem; color: #444; text-align: center; font-style: italic; line-height: 1.5; background: #f3f0ff; padding: 12px; border-radius: 12px; width: 100%; border-left: 4px solid #7928ca; margin-bottom: auto; display: flex; align-items: center; justify-content: center; min-height: 60px; }
+        
+        .hint-tap { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 5px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        
+        .controls { display: flex; gap: 15px; margin-top: 25px; width: 330px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-prev { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); }
+        .btn-prev:hover { background: rgba(255, 255, 255, 0.2); }
+        .btn-next { background: linear-gradient(45deg, #ff007f, #7928ca); color: white; }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(255,0,127,0.4); }
+        button:active { transform: translateY(1px); }
+        
+        .progress-container { margin-top: 20px; text-align: center; width: 330px; }
+        .progress-text { font-size: 0.85rem; opacity: 0.7; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
+        .progress-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; width: 16.6%; background: linear-gradient(to right, #ff007f, #7928ca); border-radius: 10px; transition: width 0.4s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+    <link href="https://googleapis.com" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <h1>Idiomai</h1>
+        <p>Toque no cartão para ver a tradução</p>
+    </header>
+
+    <div class="flashcard-container" onclick="flipCard()">
+        <div class="flashcard" id="card">
+            <!-- FRENTE -->
+            <div class="card-face card-front">
+                <div class="image-box">
+                    <span class="badge" id="card-category">Geral</span>
+                    <img id="card-image" src="" alt="Mentalize a imagem">
+                </div>
+                <div class="word-text" id="card-word">Loading...</div>
+                <div class="hint-tap">✨ Toque para revelar</div>
+            </div>
+            <!-- VERSO -->
+            <div class="card-face card-back">
+                <div style="font-size: 0.8rem; color: #777; text-transform: uppercase; font-weight: 600; letter-spacing: 1px;">Significado</div>
+                <div class="translation-text" id="card-translation">...</div>
+                <div style="font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 5px;">Exemplo de Uso</div>
+                <div class="example-text" id="card-example">...</div>
+                <div class="hint-tap">🔄 Toque para voltar</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-prev" onclick="prevCard(event)">◀ Voltar</button>
+        <button class="btn-next" onclick="nextCard(event)">Avançar ▶</button>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-text" id="card-progress">Cartão 1 de 8</div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            { word: "Coffee", translation: "Café", example: "I need a cup of hot coffee to wake up.", category: "Rotina", img: "https://unsplash.com" },
+            { word: "Beach", translation: "Praia", example: "We spent the whole afternoon at the beach.", category: "Natureza", img: "https://unsplash.com" },
+            { word: "Bookshelf", translation: "Prateleira de livros", example: "He organized his novels on the top bookshelf.", category: "Objetos", img: "https://unsplash.com" },
+            { word: "Cat", translation: "Gato", example: "The cat loves stretching out under the sun.", category: "Animais", img: "https://unsplash.com" },
+            { word: "Rain", translation: "Chuva", example: "I love the relaxing sound of heavy rain.", category: "Clima", img: "https://unsplash.com" },
+            { word: "Airplane", translation: "Avião", example: "The airplane landed safely at the airport.", category: "Viagem", img: "https://unsplash.com" },
+            { word: "Fireplace", translation: "Lareira", example: "It feels so cozy sitting by the fireplace in winter.", category: "Casa", img: "https://unsplash.com" },
+            { word: "Bicycle", translation: "Bicicleta", example: "She rides her bicycle to work every day.", category: "Transporte", img: "https://unsplash.com" }
+        ];
+
+        let currentIndex = 0;
+        const cardElement = document.getElementById('card');
+
+        function updateCard() {
+            cardElement.classList.remove('flipped');
+            
+            setTimeout(() => {
+                const currentData = flashcards[currentIndex];
+                document.getElementById('card-word').innerText = currentData.word;
+                document.getElementById('card-translation').innerText = currentData.translation;
+                document.getElementById('card-example').innerText = currentData.example;
+                document.getElementById('card-category').innerText = currentData.category;
+                
+                const imgElement = document.getElementById('card-image');
+                imgElement.src = currentData.img;
+
+                document.getElementById('card-progress').innerText = `Cartão ${currentIndex + 1} de ${flashcards.length}`;
+                const percentage = ((currentIndex + 1) / flashcards.length) * 100;
+                document.getElementById('progress-fill').style.width = `${percentage}%`;
+            }, 200);
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('flipped');
+        }
+
+        function nextCard(event) {
+            event.stopPropagation();
+            currentIndex = (currentIndex + 1) % flashcards.length;
+            updateCard();
+        }
+
+        function prevCard(event) {
+            event.stopPropagation();
+            currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
