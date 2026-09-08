@@ -7,19 +7,22 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
         body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        header { text-align: center; margin: 20px 0; }
+        header { text-align: center; margin: 20px 0; width: 100%; max-width: 400px; cursor: pointer; }
         header h1 { font-size: 2.2rem; color: #38bdf8; text-shadow: 0 0 15px rgba(56,189,248,0.4); }
-        header p { font-size: 0.9rem; color: #94a3b8; margin-top: 5px; }
+        header p { font-size: 0.9rem; color: #94a3b8; margin-top: 5px; background: #1e293b; padding: 8px; border-radius: 10px; border: 1px dashed #38bdf8; }
 
         .hidden { display: none !important; }
         .screen { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; }
 
         /* MENU HOME */
-        .score-display { background: #1e293b; padding: 10px 20px; border-radius: 50px; font-weight: bold; margin-bottom: 15px; border: 1px solid #334155; color: #f59e0b; }
-        .grid-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 15px; }
-        .group-btn { border: none; padding: 20px 10px; border-radius: 15px; font-weight: bold; color: #0f172a; cursor: pointer; font-size: 0.9rem; transition: transform 0.2s; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .score-display { background: #1e293b; padding: 10px 20px; border-radius: 50px; font-weight: bold; margin-bottom: 15px; border: 1px solid #334155; color: #f59e0b; font-size: 1.1rem; }
+        
+        /* BOTÕES QUADRADOS GRANDES */
+        .grid-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; margin-top: 15px; }
+        .group-btn { border: none; height: 140px; border-radius: 20px; font-weight: bold; color: #0f172a; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 15px rgba(0,0,0,0.4); }
+        .group-btn span { font-size: 2.5rem; }
         .group-btn:active { transform: scale(0.95); }
-        .btn-ninja { grid-column: span 2; background: linear-gradient(45deg, #ef4444, #b91c1c); color: white; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px; box-shadow: 0 0 15px rgba(239,68,68,0.5); }
+        .btn-ninja { grid-column: span 2; height: 90px; background: linear-gradient(45deg, #ef4444, #b91c1c); color: white; text-transform: uppercase; font-size: 1.2rem; letter-spacing: 1px; box-shadow: 0 0 15px rgba(239,68,68,0.5); flex-direction: row; }
 
         /* FLASHCARDS SCREEN */
         .flashcard-container { width: 100%; height: 260px; perspective: 1000px; margin: 20px 0; }
@@ -33,7 +36,7 @@
 
         /* ALTERNATIVAS */
         .options-container { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-bottom: 20px; }
-        .option-btn { background: #1e293b; border: 1px solid #334155; color: white; padding: 12px; border-radius: 12px; font-size: 1rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .option-btn { background: #1e293b; border: 1px solid #334155; color: white; padding: 14px; border-radius: 12px; font-size: 1.1rem; cursor: pointer; text-align: left; transition: all 0.2s; }
         .option-btn:active { transform: scale(0.98); }
         .correct { background: #10b981 !important; border-color: #059669 !important; color: white; }
         .wrong { background: #ef4444 !important; border-color: #dc2626 !important; color: white; }
@@ -41,31 +44,31 @@
 
         /* JOGO NINJA */
         #game-canvas { width: 100%; height: 400px; background: #020617; border: 2px dashed #ef4444; border-radius: 20px; position: relative; overflow: hidden; margin-top: 15px; }
-        .falling-word { position: absolute; background: #ef4444; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; white-space: nowrap; animation: fall linear forwards; box-shadow: 0 0 8px rgba(239,68,68,0.6); }
+        .falling-word { position: absolute; background: #ef4444; color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; white-space: nowrap; animation: fall linear forwards; box-shadow: 0 0 8px rgba(239,68,68,0.6); }
         @keyframes fall { 0% { top: -40px; } 100% { top: 410px; } }
     </style>
 </head>
 <body>
 
     <header onclick="initAudioAndPlayYo()">
-        <h1 id="main-title">WELCOME TO IDIOMAI</h1>
-        <p id="main-subtitle">Clique aqui ou em qualquer botão para ativar os sons! 🔊</p>
+        <h1>WELCOME TO IDIOMAI</h1>
+        <p id="main-subtitle">👉 CLIQUE AQUI para ativar o som e começar! 👈</p>
     </header>
 
-    <div class="score-display">PONTOS: <span id="global-score">0</span></div>
+    <div class="score-display" style="margin-top: 15px;">PONTOS: <span id="global-score">0</span></div>
 
-    <!-- TELA 1: HOME -->
+    <!-- TELA 1: HOME (BOTÕES QUADRADOS GRANDES COM EMOJIS) -->
     <div id="screen-home" class="screen">
         <div class="grid-groups">
-            <button class="group-btn btn-ninja" onclick="startNinjaGame()">⚔️ Jogo Word Ninja</button>
-            <button class="group-btn" style="background: #fef08a;" onclick="startGroup('utensilios')">🏠 Utensílios</button>
-            <button class="group-btn" style="background: #fed7aa;" onclick="startGroup('profissoes')">💼 Profissões</button>
-            <button class="group-btn" style="background: #bfdbfe;" onclick="startGroup('escola')">🎒 Escola</button>
-            <button class="group-btn" style="background: #fca5a5;" onclick="startGroup('hospital')">🏥 Hospital</button>
-            <button class="group-btn" style="background: #f472b6;" onclick="startGroup('halloween')">🎃 Halloween</button>
-            <button class="group-btn" style="background: #e2e8f0;" onclick="startGroup('construcao')">🏗️ Construção</button>
-            <button class="group-btn" style="background: #bbf7d0;" onclick="startGroup('animais')">🦁 Animais</button>
-            <button class="group-btn" style="background: #ddd6fe;" onclick="startGroup('transportes')">🚗 Transportes</button>
+            <button class="group-btn btn-ninja" onclick="startNinjaGame()"><span>⚔️</span> JOGO WORD NINJA</button>
+            <button class="group-btn" style="background: #fef08a;" onclick="startGroup('utensilios')"><span>🏠</span>Utensílios</button>
+            <button class="group-btn" style="background: #fed7aa;" onclick="startGroup('profissoes')"><span>💼</span>Profissões</button>
+            <button class="group-btn" style="background: #bfdbfe;" onclick="startGroup('escola')"><span>🎒</span>Escola</button>
+            <button class="group-btn" style="background: #fca5a5;" onclick="startGroup('hospital')"><span>🏥</span>Hospital</button>
+            <button class="group-btn" style="background: #f472b6;" onclick="startGroup('halloween')"><span>🎃</span>Halloween</button>
+            <button class="group-btn" style="background: #e2e8f0;" onclick="startGroup('construcao')"><span>🏗️</span>Construção</button>
+            <button class="group-btn" style="background: #bbf7d0;" onclick="startGroup('animais')"><span>🦁</span>Animais</button>
+            <button class="group-btn" style="background: #ddd6fe;" onclick="startGroup('transportes')"><span>🚗</span>Transportes</button>
         </div>
     </div>
 
@@ -84,7 +87,7 @@
                 </div>
             </div>
         </div>
-        <div id="quiz-alert-text" style="margin-bottom: 10px; font-size: 0.9rem; color: #f59e0b; font-weight: bold; text-align: center;">Qual é a tradução correta? Se errar, volta do início! Cuidado! ⚠️</div>
+        <div id="quiz-alert-text" style="margin-bottom: 10px; font-size: 0.9rem; color: #f59e0b; font-weight: bold; text-align: center;">Qual é a tradução correta? Se errar, volta do início! ⚠️</div>
         <div class="options-container" id="quiz-options"></div>
     </div>
 
@@ -94,7 +97,7 @@
             <button class="nav-btn" onclick="stopNinjaGame()">🛑 Sair do Jogo</button>
             <div style="font-weight:bold; color:#ef4444;">NÍVEL: <span id="ninja-level">1</span></div>
         </div>
-        <p style="font-size:0.8rem; color:#94a3b8; margin-top:10px; text-align:center;">Toque rápido nas palavras vermelhas in inglês para cortá-las com sua espada ninja!</p>
+        <p style="font-size:0.8rem; color:#94a3b8; margin-top:10px; text-align:center;">Toque rápido nas palavras vermelhas em inglês para cortá-las!</p>
         <div id="game-canvas"></div>
     </div>
 
@@ -105,9 +108,11 @@
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
-        // 🔊 SOM: Entrada "YO!"
         function playYoSound() {
             initAudio();
             const osc = audioCtx.createOscillator();
@@ -124,13 +129,13 @@
         }
 
         function initAudioAndPlayYo() {
+            initAudio();
             playYoSound();
             document.getElementById('main-subtitle').textContent = "Aprenda vocabulários jogando e acumulando pontos!";
         }
 
-        // ⚔️ SOM: Barulho de Corte da Espada Ninja
         function playSlashSound() {
-            if (!audioCtx) initAudio();
+            initAudio();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'triangle';
@@ -144,20 +149,10 @@
             osc.stop(audioCtx.currentTime + 0.12);
         }
 
-        // 🥋 SOM: Grito do Ninja Kiai
         function playNinjaScream() {
-            if (!audioCtx) initAudio();
+            initAudio();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(180, audioCtx.currentTime);
             osc.frequency.linearRampToValueAtTime(320, audioCtx.currentTime + 0.1);
-            osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.4);
-            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.45);
-        }
-
