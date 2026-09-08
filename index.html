@@ -3,137 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Idiomai - Flashcards Visuais Inteligentes</title>
+    <title>Idiomai - Plataforma Gamer de Idiomas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif; }
-        body { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; color: white; overflow-x: hidden; }
-        
-        header { text-align: center; margin-bottom: 25px; animation: fadeIn 1s ease; }
-        header h1 { font-size: 2.8rem; font-weight: 800; background: linear-gradient(to right, #ff007f, #7928ca); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        header p { font-size: 1rem; opacity: 0.85; margin-top: 5px; font-weight: 300; letter-spacing: 0.5px; }
-        
-        .flashcard-container { width: 330px; height: 460px; perspective: 1200px; cursor: pointer; margin-bottom: 10px; }
-        .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-radius: 24px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+        body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        header { text-align: center; margin: 20px 0; }
+        header h1 { font-size: 2.2rem; color: #38bdf8; text-shadow: 0 0 15px rgba(56,189,248,0.4); }
+        header p { font-size: 0.9rem; color: #94a3b8; margin-top: 5px; }
+
+        .hidden { display: none !important; }
+        .screen { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; }
+
+        /* MENU HOME */
+        .score-display { background: #1e293b; padding: 10px 20px; border-radius: 50px; font-weight: bold; margin-bottom: 15px; border: 1px solid #334155; color: #f59e0b; }
+        .grid-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 15px; }
+        .group-btn { border: none; padding: 20px 10px; border-radius: 15px; font-weight: bold; color: #0f172a; cursor: pointer; font-size: 0.9rem; transition: transform 0.2s; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .group-btn:active { transform: scale(0.95); }
+        .btn-ninja { grid-column: span 2; background: linear-gradient(45deg, #ef4444, #b91c1c); color: white; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px; box-shadow: 0 0 15px rgba(239,68,68,0.5); }
+
+        /* FLASHCARDS SCREEN */
+        .flashcard-container { width: 100%; height: 260px; perspective: 1000px; margin: 20px 0; }
+        .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s; border-radius: 20px; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
         .flashcard.flipped { transform: rotateY(180deg); }
-        
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 22px; background: white; color: #333; border: 1px solid rgba(255,255,255,0.1); transition: background 0.3s ease; }
-        .card-front { background: #ffffff; }
-        .card-back { transform: rotateY(180deg); background: #fdfdfd; border: 4px solid #7928ca; }
-        
-        .image-box { width: 100%; height: 230px; border-radius: 16px; overflow: hidden; background: #f0f0f0; margin-bottom: 10px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); position: relative; }
-        .image-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .flashcard-container:hover .image-box img { transform: scale(1.04); }
-        
-        .badge { position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); }
-        
-        .word-text { font-size: 2.4rem; font-weight: 800; color: #1e3c72; text-align: center; margin: auto 0; letter-spacing: -0.5px; }
-        .translation-text { font-size: 2rem; font-weight: 700; color: #7928ca; text-align: center; margin-top: 15px; margin-bottom: 10px; }
-        .example-text { font-size: 1rem; color: #444; text-align: center; font-style: italic; line-height: 1.5; background: #f3f0ff; padding: 12px; border-radius: 12px; width: 100%; border-left: 4px solid #7928ca; margin-bottom: auto; display: flex; align-items: center; justify-content: center; min-height: 60px; }
-        
-        .hint-tap { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 5px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-        
-        .controls { display: flex; gap: 15px; margin-top: 25px; width: 330px; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-prev { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); }
-        .btn-prev:hover { background: rgba(255, 255, 255, 0.2); }
-        .btn-next { background: linear-gradient(45deg, #ff007f, #7928ca); color: white; }
-        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(255,0,127,0.4); }
-        button:active { transform: translateY(1px); }
-        
-        .progress-container { margin-top: 20px; text-align: center; width: 330px; }
-        .progress-text { font-size: 0.85rem; opacity: 0.7; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
-        .progress-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; width: 16.6%; background: linear-gradient(to right, #ff007f, #7928ca); border-radius: 10px; transition: width 0.4s ease; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
+        .front { background: white; color: #0f172a; }
+        .back { transform: rotateY(180deg); background: #1e293b; color: white; border: 3px solid #38bdf8; }
+        .card-img { width: 100%; height: 70%; object-fit: cover; border-radius: 12px; margin-bottom: 10px; background: #e2e8f0; }
+        .word-txt { font-size: 1.8rem; font-weight: bold; text-transform: capitalize; text-align: center; }
+
+        /* ALTERNATIVAS */
+        .options-container { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-bottom: 20px; }
+        .option-btn { background: #1e293b; border: 1px solid #334155; color: white; padding: 12px; border-radius: 12px; font-size: 1rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .option-btn:active { transform: scale(0.98); }
+        .correct { background: #10b981 !important; border-color: #059669 !important; color: white; }
+        .wrong { background: #ef4444 !important; border-color: #dc2626 !important; color: white; }
+        .nav-btn { background: #334155; border: none; color: white; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; }
+
+        /* JOGO NINJA */
+        #game-canvas { width: 100%; height: 400px; background: #020617; border: 2px dashed #ef4444; border-radius: 20px; position: relative; overflow: hidden; margin-top: 15px; }
+        .falling-word { position: absolute; background: #ef4444; color: white; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; white-space: nowrap; animation: fall linear forwards; box-shadow: 0 0 8px rgba(239,68,68,0.6); }
+        @keyframes fall { 0% { top: -40px; } 100% { top: 410px; } }
     </style>
-    <link href="https://googleapis.com" rel="stylesheet">
 </head>
 <body>
 
-    <header>
-        <h1>Idiomai</h1>
-        <p>Toque no cartão para ver a tradução</p>
+    <header onclick="initAudioAndPlayYo()">
+        <h1 id="main-title">WELCOME TO IDIOMAI</h1>
+        <p id="main-subtitle">Clique aqui ou em qualquer botão para ativar os sons! 🔊</p>
     </header>
 
-    <div class="flashcard-container" onclick="flipCard()">
-        <div class="flashcard" id="card">
-            <!-- FRENTE -->
-            <div class="card-face card-front">
-                <div class="image-box">
-                    <span class="badge" id="card-category">Geral</span>
-                    <img id="card-image" src="" alt="Mentalize a imagem">
+    <div class="score-display">PONTOS: <span id="global-score">0</span></div>
+
+    <!-- TELA 1: HOME -->
+    <div id="screen-home" class="screen">
+        <div class="grid-groups">
+            <button class="group-btn btn-ninja" onclick="startNinjaGame()">⚔️ Jogo Word Ninja</button>
+            <button class="group-btn" style="background: #fef08a;" onclick="startGroup('utensilios')">🏠 Utensílios</button>
+            <button class="group-btn" style="background: #fed7aa;" onclick="startGroup('profissoes')">💼 Profissões</button>
+            <button class="group-btn" style="background: #bfdbfe;" onclick="startGroup('escola')">🎒 Escola</button>
+            <button class="group-btn" style="background: #fca5a5;" onclick="startGroup('hospital')">🏥 Hospital</button>
+            <button class="group-btn" style="background: #f472b6;" onclick="startGroup('halloween')">🎃 Halloween</button>
+            <button class="group-btn" style="background: #e2e8f0;" onclick="startGroup('construcao')">🏗️ Construção</button>
+            <button class="group-btn" style="background: #bbf7d0;" onclick="startGroup('animais')">🦁 Animais</button>
+            <button class="group-btn" style="background: #ddd6fe;" onclick="startGroup('transportes')">🚗 Transportes</button>
+        </div>
+    </div>
+
+    <!-- TELA 2: FLASHCARDS + QUIZ -->
+    <div id="screen-cards" class="screen hidden">
+        <button class="nav-btn" onclick="goToHome()" style="align-self: flex-start;">◀ Voltar ao Menu</button>
+        <div class="flashcard-container">
+            <div class="flashcard" id="html-card" onclick="flipCard()">
+                <div class="face front" id="card-front-face">
+                    <img src="" id="img-asset" class="card-img" alt="Vocabulário">
+                    <div class="word-txt" id="txt-portugues">Carregando...</div>
                 </div>
-                <div class="word-text" id="card-word">Loading...</div>
-                <div class="hint-tap">✨ Toque para revelar</div>
-            </div>
-            <!-- VERSO -->
-            <div class="card-face card-back">
-                <div style="font-size: 0.8rem; color: #777; text-transform: uppercase; font-weight: 600; letter-spacing: 1px;">Significado</div>
-                <div class="translation-text" id="card-translation">...</div>
-                <div style="font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 5px;">Exemplo de Uso</div>
-                <div class="example-text" id="card-example">...</div>
-                <div class="hint-tap">🔄 Toque para voltar</div>
+                <div class="face back">
+                    <div class="word-txt" id="txt-ingles" style="color: #38bdf8;">...</div>
+                    <p style="margin-top:10px; font-size:0.8rem; color:#94a3b8;">Toque para ver a dica</p>
+                </div>
             </div>
         </div>
+        <div id="quiz-alert-text" style="margin-bottom: 10px; font-size: 0.9rem; color: #f59e0b; font-weight: bold; text-align: center;">Qual é a tradução correta? Se errar, volta do início! Cuidado! ⚠️</div>
+        <div class="options-container" id="quiz-options"></div>
     </div>
 
-    <div class="controls">
-        <button class="btn-prev" onclick="prevCard(event)">◀ Voltar</button>
-        <button class="btn-next" onclick="nextCard(event)">Avançar ▶</button>
-    </div>
-
-    <div class="progress-container">
-        <div class="progress-text" id="card-progress">Cartão 1 de 8</div>
-        <div class="progress-bar-bg">
-            <div class="progress-bar-fill" id="progress-fill"></div>
+    <!-- TELA 3: JOGO DO NINJA -->
+    <div id="screen-ninja" class="screen hidden">
+        <div style="display:flex; justify-content: space-between; width:100%;">
+            <button class="nav-btn" onclick="stopNinjaGame()">🛑 Sair do Jogo</button>
+            <div style="font-weight:bold; color:#ef4444;">NÍVEL: <span id="ninja-level">1</span></div>
         </div>
+        <p style="font-size:0.8rem; color:#94a3b8; margin-top:10px; text-align:center;">Toque rápido nas palavras vermelhas in inglês para cortá-las com sua espada ninja!</p>
+        <div id="game-canvas"></div>
     </div>
 
     <script>
-        const flashcards = [
-            { word: "Coffee", translation: "Café", example: "I need a cup of hot coffee to wake up.", category: "Rotina", img: "https://unsplash.com" },
-            { word: "Beach", translation: "Praia", example: "We spent the whole afternoon at the beach.", category: "Natureza", img: "https://unsplash.com" },
-            { word: "Bookshelf", translation: "Prateleira de livros", example: "He organized his novels on the top bookshelf.", category: "Objetos", img: "https://unsplash.com" },
-            { word: "Cat", translation: "Gato", example: "The cat loves stretching out under the sun.", category: "Animais", img: "https://unsplash.com" },
-            { word: "Rain", translation: "Chuva", example: "I love the relaxing sound of heavy rain.", category: "Clima", img: "https://unsplash.com" },
-            { word: "Airplane", translation: "Avião", example: "The airplane landed safely at the airport.", category: "Viagem", img: "https://unsplash.com" },
-            { word: "Fireplace", translation: "Lareira", example: "It feels so cozy sitting by the fireplace in winter.", category: "Casa", img: "https://unsplash.com" },
-            { word: "Bicycle", translation: "Bicicleta", example: "She rides her bicycle to work every day.", category: "Transporte", img: "https://unsplash.com" }
-        ];
+        let audioCtx = null;
 
-        let currentIndex = 0;
-        const cardElement = document.getElementById('card');
-
-        function updateCard() {
-            cardElement.classList.remove('flipped');
-            
-            setTimeout(() => {
-                const currentData = flashcards[currentIndex];
-                document.getElementById('card-word').innerText = currentData.word;
-                document.getElementById('card-translation').innerText = currentData.translation;
-                document.getElementById('card-example').innerText = currentData.example;
-                document.getElementById('card-category').innerText = currentData.category;
-                
-                const imgElement = document.getElementById('card-image');
-                imgElement.src = currentData.img;
-
-                document.getElementById('card-progress').innerText = `Cartão ${currentIndex + 1} de ${flashcards.length}`;
-                const percentage = ((currentIndex + 1) / flashcards.length) * 100;
-                document.getElementById('progress-fill').style.width = `${percentage}%`;
-            }, 200);
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
         }
 
-        function flipCard() {
-            cardElement.classList.toggle('flipped');
+        // 🔊 SOM: Entrada "YO!"
+        function playYoSound() {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(250, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.25);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
         }
 
-        function nextCard(event) {
-            event.stopPropagation();
-            currentIndex = (currentIndex + 1) % flashcards.length;
-            updateCard();
+        function initAudioAndPlayYo() {
+            playYoSound();
+            document.getElementById('main-subtitle').textContent = "Aprenda vocabulários jogando e acumulando pontos!";
         }
 
-        function prevCard(event) {
-            event.stopPropagation();
-            currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
+        // ⚔️ SOM: Barulho de Corte da Espada Ninja
+        function playSlashSound() {
+            if (!audioCtx) initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.12);
+        }
+
+        // 🥋 SOM: Grito do Ninja Kiai
+        function playNinjaScream() {
+            if (!audioCtx) initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(320, audioCtx.currentTime + 0.1);
+            osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.4);
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.45);
+        }
+
