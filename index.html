@@ -37,8 +37,8 @@
         .romaji-text { display: block; font-size: 11px; color: #aaa; font-style: italic; margin-top: 4px; }
 
         /* Grid de Seleção */
-        .char-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
-        .char-card { background: #161622; border: 2px solid #555; border-radius: 10px; padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; text-align: left; }
+        .char-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .char-card { background: #161622; border: 2px solid #555; border-radius: 10px; padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; text-align: left; -webkit-tap-highlight-color: transparent; }
         .char-card:active { border-color: #00ff66; background: #112211; }
 
         /* Trilha Mapa */
@@ -71,7 +71,7 @@
         .dialogue-person { font-weight: bold; color: #ffcc00; font-size: 13px; }
         .dialogue-text { font-size: 15px; font-style: italic; color: #fff; }
 
-        /* Tela de Prova Física */
+        /* Prova */
         .exam-question-card { background: #161625; border: 2px solid #ffcc00; border-radius: 12px; padding: 15px; text-align: left; margin: 15px 0; }
     </style>
 </head>
@@ -100,22 +100,22 @@
             </div>
         </div>
 
-        <!-- TELA 1: SELEÇÃO DE PERSONAGEM -->
+        <!-- TELA 1: SELEÇÃO DE PERSONAGEM (SANTOS REAIS) -->
         <div id="screen-char-select">
             <h1>WELCOME TO IDIOMAI</h1>
-            <p style="color: #aaa; font-size: 13px;">Escolha o santo ou herói que guiará sua jornada:</p>
+            <p style="color: #aaa; font-size: 13px;">Escolha o santo que guiará sua jornada:</p>
             <div class="char-grid">
                 <div class="char-card" onclick="setCompanion('São Francisco', '🕊️', 'Paz e Bem! Vamos aprender com dedicação!')">
                     <div style="font-size:35px;">🕊️</div>
-                    <div><strong>São Francisco de Assis</strong><br><span style="font-size:11px; color:#aaa;">Guia com paz e paciência.</span></div>
+                    <div><strong>São Francisco de Assis</strong><br><span style="font-size:11px; color:#aaa;">Guia com paz, humildade e paciência.</span></div>
                 </div>
                 <div class="char-card" onclick="setCompanion('Santa Teresinha', '🌹', 'Vou derramar uma chuva de rosas e acertos nos seus estudos!')">
                     <div style="font-size:35px;">🌹</div>
-                    <div><strong>Santa Teresinha</strong><br><span style="font-size:11px; color:#aaa;">Guia com carinho e pequenas metas.</span></div>
+                    <div><strong>Santa Teresinha</strong><br><span style="font-size:11px; color:#aaa;">Guia com carinho e pequenas metas diárias.</span></div>
                 </div>
-                <div class="char-card" onclick="setCompanion('Goku (Anime)', '🔥', 'Oi, eu sou o Goku! Vamos treinar o seu idioma com tudo!')">
-                    <div style="font-size:35px;">🔥</div>
-                    <div><strong>Goku (Anime)</strong><br><span style="font-size:11px; color:#aaa;">Focado em ação e superação!</span></div>
+                <div class="char-card" onclick="setCompanion('Dom Bosco', '👦', 'Alegria! Estudar é o caminho para o céu e para a sabedoria!')">
+                    <div style="font-size:35px;">👦</div>
+                    <div><strong>São João Bosco (Dom Bosco)</strong><br><span style="font-size:11px; color:#aaa;">O grande protetor e mestre dos jovens e crianças.</span></div>
                 </div>
             </div>
         </div>
@@ -137,4 +137,3 @@
 
         <!-- PASSO 1: FLASHCARDS -->
         <div id="screen-flashcards" class="hidden">
-            <h2 style="font-size:14px; color:#ffcc00;">[PASSO 1/5] Quiz Flashcards</h2>
